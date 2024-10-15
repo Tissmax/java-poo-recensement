@@ -3,6 +3,7 @@ package fr.diginamic.recensement;
 import java.util.Scanner;
 
 import fr.diginamic.recensement.entites.Recensement;
+import fr.diginamic.recensement.exeptions.BorneServiceExeption;
 import fr.diginamic.recensement.services.RechercheDepartementsPlusPeuplees;
 import fr.diginamic.recensement.services.RecherchePopulationBorneService;
 import fr.diginamic.recensement.services.RecherchePopulationDepartementService;
@@ -16,8 +17,7 @@ import fr.diginamic.recensement.utils.RecensementUtils;
 
 /**
  * Application de traitement des données de recensement de population
- * 
- * @param args
+ *
  */
 public class Application {
 
@@ -26,7 +26,7 @@ public class Application {
 	 * 
 	 * @param args arguments (non utilisés ici)
 	 */
-	public static void main(String[] args) {
+	public static void main(String[] args) throws Exception{
 		Scanner scanner = new Scanner(System.in);
 
 		String filePath = ClassLoader.getSystemClassLoader().getResource("recensement.csv").getFile();
@@ -51,12 +51,13 @@ public class Application {
 			choix = Integer.parseInt(choixMenu);
 
 			// On exécute l'option correspondant au choix de l'utilisateur
-			switch (choix) {
+			try {
+				switch (choix) {
 			case 1:
 				RecherchePopulationVilleService rechercheVille = new RecherchePopulationVilleService();
 				rechercheVille.traiter(recensement, scanner);
 				break;
-			case 2:
+                case 2:
 				RecherchePopulationDepartementService rechercheDept = new RecherchePopulationDepartementService();
 				rechercheDept.traiter(recensement, scanner);
 				break;
@@ -89,8 +90,11 @@ public class Application {
 				rechercheVillesPlusPeupleesFrance.traiter(recensement, scanner);
 				break;
 			}
+			} catch (BorneServiceExeption e) {
+				System.err.println(e.getMessage());
+			}
 
-		} while (choix != 99);
+        } while (choix != 99);
 
 		scanner.close();
 
